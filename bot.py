@@ -1,11 +1,11 @@
 import os
 import aiohttp
-from pyrogram import Client, filters, idle
+from pyrogram import Client, filters
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import UserNotParticipant
 
 # ==========================================
-# ENVIRONMENT VARIABLES (റേഡിയോ/റെയിൽവേ/റെൻഡർ വേരിയബിൾസ്)
+# ENVIRONMENT VARIABLES
 # ==========================================
 API_ID = int(os.getenv("API_ID", "0"))
 API_HASH = os.getenv("API_HASH", "")
@@ -77,7 +77,7 @@ async def check_sub_callback(client, callback_query: CallbackQuery):
     else:
         await callback_query.answer("⚠️ You haven't joined the channel yet!", show_alert=True)
 
-# /settings കമാൻഡ് (ക്രമം: Set -> Remove -> View)
+# /settings കമാൻഡ്
 @app.on_message(filters.command("settings"))
 async def settings_handler(client, message: Message):
     user_id = message.from_user.id
@@ -95,7 +95,7 @@ async def settings_handler(client, message: Message):
         reply_markup=keyboard
     )
 
-# സ്ലാഷ് കമാൻഡുകൾ (Slash Commands Support)
+# സ്ലാഷ് കമാൻഡുകൾ
 @app.on_message(filters.command("set_thumb"))
 async def slash_set_thumb(client, message: Message):
     waiting_for_thumb[message.from_user.id] = True
@@ -158,7 +158,7 @@ async def save_thumbnail_photo(client, message: Message):
         waiting_for_thumb[user_id] = False
         await message.reply_text("✅ Custom thumbnail successfully saved!")
 
-# ഫയലുകൾ (വീഡിയോ/ഡോക്യുമെന്റ്) സ്വീകരിക്കുമ്പോൾ
+# ഫയലുകൾ സ്വീകരിക്കുമ്പോൾ
 @app.on_message(filters.document | filters.video)
 async def get_file(client, message: Message):
     user_id = message.from_user.id
@@ -226,7 +226,7 @@ async def rename_process(client, message: Message):
         reply_markup=keyboard
     )
 
-# ഔട്ട്പുട്ട് ഫോർമാറ്റ് സെലക്ഷൻ ഹാൻഡ്ലർ (Document / Video)
+# ഔട്ട്പുട്ട് ഫോർമാറ്റ് സെലക്ഷൻ ഹാൻഡ്ലർ
 @app.on_callback_query(filters.regex("^format_"))
 async def format_selection(client, callback_query: CallbackQuery):
     user_id = callback_query.from_user.id
@@ -294,9 +294,5 @@ async def format_selection(client, callback_query: CallbackQuery):
         if user_id in user_renaming:
             del user_renaming[user_id]
 
-# മെയിൻ സ്റ്റാർട്ട് ഫങ്ഷൻ (Render-നു വേണ്ടി അപ്ഡേറ്റ് ചെയ്തത്)
-if __name__ == "__main__":
-    app.start()
-    print("Bot is up and running successfully!")
-    idle()
-    app.stop()
+print("Bot is up and running successfully!")
+app.run()
