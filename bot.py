@@ -1,11 +1,11 @@
 import os
 import aiohttp
-from pyrogram import Client, filters
+from pyrogram import Client, filters, idle
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import UserNotParticipant
 
 # ==========================================
-# ENVIRONMENT VARIABLES (എല്ലാ ക്രമീകരണങ്ങളും Env-ൽ നിന്നാണ് എടുക്കുന്നത്)
+# ENVIRONMENT VARIABLES (റേഡിയോ/റെയിൽവേ/റെൻഡർ വേരിയബിൾസ്)
 # ==========================================
 API_ID = int(os.getenv("API_ID", "0"))
 API_HASH = os.getenv("API_HASH", "")
@@ -214,7 +214,6 @@ async def rename_process(client, message: Message):
             user_data[user_id] = {}
         user_data[user_id]["temp_thumb_url"] = custom_thumb_url
 
-    # ഡോക്യുമെന്റ് അല്ലെങ്കിൽ വീഡിയോ തിരഞ്ഞെടുക്കാൻ രണ്ട് ബോക്സ് ബട്ടണുകൾ
     keyboard = InlineKeyboardMarkup([
         [
             InlineKeyboardButton("📄 Document File", callback_data="format_doc"),
@@ -250,7 +249,6 @@ async def format_selection(client, callback_query: CallbackQuery):
     try:
         file_path = await original_msg.download(file_name=new_name)
         
-        # തംബ്‌നെയിൽ എടുക്കൽ (Temporary URL അല്ലെങ്കിൽ Saved Thumb)
         thumb_url = user_data.get(user_id, {}).get("temp_thumb_url")
         saved_thumb = user_data.get(user_id, {}).get("thumb")
         
@@ -296,5 +294,9 @@ async def format_selection(client, callback_query: CallbackQuery):
         if user_id in user_renaming:
             del user_renaming[user_id]
 
-print("Bot is up and running successfully!")
-app.run()
+# മെയിൻ സ്റ്റാർട്ട് ഫങ്ഷൻ (Render-നു വേണ്ടി അപ്ഡേറ്റ് ചെയ്തത്)
+if __name__ == "__main__":
+    app.start()
+    print("Bot is up and running successfully!")
+    idle()
+    app.stop()
